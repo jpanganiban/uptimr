@@ -20,4 +20,20 @@ describe("Main Application", function() {
 
   });
 
+  describe("Parse object", function() {
+
+    it("should exist", function() {
+      expect(Parse).toBeDefined();
+    });
+
+    it("should have 'appId' as its attribute", function() {
+      expect(Parse.appId).toBeDefined();
+    });
+
+    it("should have 'restKey' as its attribute", function() {
+      expect(Parse.restKey).toBeDefined();
+    });
+
+  });
+
 });
