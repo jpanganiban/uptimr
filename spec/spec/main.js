@@ -34,6 +34,14 @@ describe("Main Application", function() {
       expect(Parse.restKey).toBeDefined();
     });
 
+    it("should have 'baseUrl' as its attribute", function() {
+      expect(Parse.baseUrl).toBeDefined();
+    });
+
+    it("should have 'apiVersion as its attribute", function() {
+      expect(Parse.apiVersion).toBeDefined();
+    });
+
   });
 
 });
