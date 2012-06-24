@@ -9,6 +9,7 @@ var Parse = { appId: 'PXsT5VE2Qaizs3yDnR8QtfQdSRp0vxQTI9eUOa15'
 
 Uptimr.sync = function(method, model, options) {
 
+  // Add Parse headers for authentication
   var newOptions = _.extend({
     beforeSend: function(xhr) {
       xhr.setRequestHeader('X-Parse-Application-Id', Parse.appId);
@@ -16,6 +17,11 @@ Uptimr.sync = function(method, model, options) {
     }
   }, options);
 
+  // Remove Parse reserved attributes
+  delete model.attributes.createdAt;
+  delete model.attributes.updatedAt;
+
+  // Call original Backbone.sync method
   Backbone.sync(method, model, newOptions);
 
 };
@@ -24,8 +30,14 @@ Uptimr.BaseView = Backbone.View.extend();
 
 Uptimr.BaseModel = Backbone.Model.extend({
 
+  // Parse classname
   className: ''
 
+  // We tell backbone that Parse saves the
+  // object id to objectId attribute
+  , idAttribute: 'objectId'
+
+  // We use our custom sync that works with Parse
   , sync: Uptimr.sync
 
   , urlRoot: function() {
