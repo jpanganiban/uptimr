@@ -1,1 +1,1 @@
-Uptimr = {  };
+var Uptimr = { views: {}, models: {}, collections: {} };
