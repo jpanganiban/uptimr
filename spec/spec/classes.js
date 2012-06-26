@@ -18,7 +18,8 @@ describe("Base Classes", function() {
       var TestModel
         , testModel
         , successCallbackSpy
-        , errorCallbackSpy;
+        , errorCallbackSpy
+        , deletionTest;
 
       beforeEach(function() {
         // Inherit from BaseModel so we can set
@@ -36,7 +37,7 @@ describe("Base Classes", function() {
 
       afterEach(function() {
         // We delete the data after testing
-        testModel.destroy({ wait: true });
+          testModel.destroy({ wait: true });
         testModel = undefined;
       });
 
@@ -73,33 +74,29 @@ describe("Base Classes", function() {
 
       describe("when this model exists", function() {
 
+        var fixtureSpy;
+
         beforeEach(function() {
-          // We make sure that we have a model that 
-          // exists in the Server
+          // Create our fixture spy
+          fixtureSpy = jasmine.createSpy('fixture spy');
+
+          // We create fixture for testing
           runs(function() {
             var data = {
               team: 'manchesters united'
             }
             , options = {
               wait: true
-              , success: successCallbackSpy
-              , error: errorCallbackSpy
+              , success: fixtureSpy
+              , error: fixtureSpy
             };
 
             testModel.save(data, options);
           });
 
           waitsFor(function() {
-            return successCallbackSpy.wasCalled || errorCallbackSpy.wasCalled;
+            return fixtureSpy.wasCalled;
           }, "Parse server took too long to respond", 10000);
-
-          // FIXME: Raise a jasmine error so it shows in the web interface
-          // than be thrown in the console. Unsure if unnecessary.
-          runs(function() {
-            if (errorCallbackSpy.wasCalled) {
-              expect("There was an error with the ajax request").toEqual(true);
-            }
-          });
 
         });
 

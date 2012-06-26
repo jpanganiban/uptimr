@@ -17,7 +17,7 @@ Uptimr.sync = function(method, model, options) {
     }
   }, options);
 
-  if (!method == 'read') {
+  if (method == 'update' || method == 'create') {
     // Remove Parse reserved attributes
     delete model.attributes.createdAt;
     delete model.attributes.updatedAt;
