@@ -17,9 +17,11 @@ Uptimr.sync = function(method, model, options) {
     }
   }, options);
 
-  // Remove Parse reserved attributes
-  delete model.attributes.createdAt;
-  delete model.attributes.updatedAt;
+  if (!method == 'read') {
+    // Remove Parse reserved attributes
+    delete model.attributes.createdAt;
+    delete model.attributes.updatedAt;
+  }
 
   // Call original Backbone.sync method
   Backbone.sync(method, model, newOptions);
@@ -46,6 +48,14 @@ Uptimr.BaseModel = Backbone.Model.extend({
 
 });
 
-Uptimr.BaseCollection = Backbone.Collection.extend();
+Uptimr.BaseCollection = Backbone.Collection.extend({
+
+  sync: Uptimr.sync
+
+  , url: function() {
+    return new this.model().urlRoot();
+  }
+
+});
 
 })(jQuery);

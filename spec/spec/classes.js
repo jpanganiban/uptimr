@@ -62,7 +62,7 @@ describe("Base Classes", function() {
 
         waitsFor(function() {
           return successCallbackSpy.wasCalled || errorCallbackSpy.wasCalled;
-        }, "Parse server took too long to respond", 10000);
+        }, ajaxConfig.errorMessage, ajaxConfig.timeout);
 
         runs(function() {
           expect(successCallbackSpy).toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe("Base Classes", function() {
           // than be thrown in the console. Unsure if unnecessary.
           runs(function() {
             if (errorCallbackSpy.wasCalled) {
-              expect("There was the ajax request").toEqual(true);
+              expect("There was an error with the ajax request").toEqual(true);
             }
           });
 
@@ -125,7 +125,7 @@ describe("Base Classes", function() {
 
           waitsFor(function() {
             return successCallbackSpy.wasCalled || errorCallbackSpy.wasCalled;
-          }, "Parse server took too long to respond", 10000);
+          }, ajaxConfig.errorMessage, ajaxConfig.timeout);
 
           runs(function() {
             expect(successCallbackSpy).toHaveBeenCalled();
@@ -149,7 +149,7 @@ describe("Base Classes", function() {
 
           waitsFor(function() {
             return successCallbackSpy.wasCalled || errorCallbackSpy.wasCalled;
-          }, "Parse server took too long to respond", 10000);
+          }, ajaxConfig.errorMessage, ajaxConfig.timeout);
 
           runs(function() {
             expect(successCallbackSpy).toHaveBeenCalled();
@@ -168,6 +168,99 @@ describe("Base Classes", function() {
 
     it("should exist", function() {
       expect(Uptimr.BaseCollection).toBeDefined();
+    });
+
+    describe("Parse methods", function() {
+
+      var TestCollection
+        , testCollection
+        , TestModel
+        , testModel
+        , successCallbackSpy
+        , errorCallbackSpy
+        , fixtureSpy
+        , fixtureClassName;
+
+      beforeEach(function() {
+        // Create spies
+        fixtureSpy = jasmine.createSpy('fixture spy');
+        successCallbackSpy = jasmine.createSpy('success callback');
+        errorCallbackSpy = jasmine.createSpy('error callback');
+
+        // Create fixture
+        fixtureClassName = 'test';
+        TestModel = Uptimr.BaseModel.extend({
+          className: fixtureClassName
+        });
+        
+        runs(function() {
+          var data = {
+            score: 0
+            , team: 'collection'
+          }
+          , options = {
+            wait: true
+            , success: fixtureSpy
+            , error: fixtureSpy
+          };
+
+          testModel = new TestModel();
+
+          testModel.save(data, options);
+        });
+
+        waitsFor(function() {
+          return fixtureSpy.wasCalled;
+        }, "", ajaxConfig.errorMessage, ajaxConfig.timeout);
+
+        TestCollection = Uptimr.BaseCollection.extend({
+          model: TestModel
+        });
+
+        testCollection = new TestCollection();
+      });
+
+      afterEach(function() {
+        testModel.destroy({ wait: true });
+        testModel = undefined;
+        testCollection = undefined;
+        // FIXME: Do we still have to remove it
+        // everytime?
+        fixtureClassName = null;
+      });
+
+      it("should be able to construct its url properly", function() {
+        // Normally, it's just the same as its model's urlRoot
+        expect(testCollection.url()).toEqual(testModel.urlRoot());
+        // but better to be sure about it so we're checking it manually.
+        expect(testCollection.url()).toEqual(Parse.baseUrl + '/' +
+          Parse.apiVersion + '/classes/' + fixtureClassName);
+      });
+
+      it("should be able to fetch", function() {
+
+        runs(function() {
+          var options = {
+            wait: true
+            , success: successCallbackSpy
+            , error: errorCallbackSpy
+          };
+
+          testCollection.fetch(options);
+        });
+
+        waitsFor(function() {
+          return successCallbackSpy.wasCalled || errorCallbackSpy.wasCalled;
+        }, ajaxConfig.errorMessage, ajaxConfig.timeout);
+
+        runs(function() {
+          expect(successCallbackSpy).toHaveBeenCalled();
+          expect(errorCallbackSpy).not.toHaveBeenCalled();
+          expect(testCollection.length).toEqual(1);
+        });
+
+      });
+
     });
 
   });
