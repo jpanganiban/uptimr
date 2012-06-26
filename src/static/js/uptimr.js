@@ -52,6 +52,10 @@ Uptimr.BaseCollection = Backbone.Collection.extend({
 
   sync: Uptimr.sync
 
+  , parse: function(response) {
+    return response.results;
+  }
+
   , url: function() {
     return this.model.prototype.urlRoot();
   }

@@ -244,7 +244,6 @@ describe("Base Classes", function() {
       });
 
       it("should be able to fetch", function() {
-
         runs(function() {
           var options = {
             wait: true
@@ -262,7 +261,12 @@ describe("Base Classes", function() {
         runs(function() {
           expect(successCallbackSpy).toHaveBeenCalled();
           expect(errorCallbackSpy).not.toHaveBeenCalled();
+          // We've created only one fixture so we should only 
+          // expect 1.
+          // XXX: Test have to be completed so that future errors would be
+          // prevented. Else, test class in parse should be deleted.
           expect(testCollection.length).toEqual(1);
+          expect(testCollection.models[0].id).toEqual(testModel.id);
         });
 
       });
