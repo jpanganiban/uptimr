@@ -33,11 +33,18 @@ describe("Base Classes", function() {
         // Create spies
         successCallbackSpy = jasmine.createSpy('success callback');
         errorCallbackSpy = jasmine.createSpy('error callback');
+
+        // set deletionTest to false
+        deletionTest = false;
       });
 
       afterEach(function() {
         // We delete the data after testing
+        // and only delete it when it's not a
+        // deletion test
+        if (!deletionTest) {
           testModel.destroy({ wait: true });
+        }
         testModel = undefined;
       });
 
@@ -152,6 +159,8 @@ describe("Base Classes", function() {
             expect(successCallbackSpy).toHaveBeenCalled();
             expect(errorCallbackSpy).not.toHaveBeenCalled();
           });
+
+          deletionTest = true;
 
         });
 
